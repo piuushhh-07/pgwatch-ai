@@ -3,7 +3,6 @@ import requests
 import click
 from datetime import datetime, timedelta
 
-# ── Connect to PostgreSQL ────────────────────────────
 def get_connection(host, port, dbname, user, password):
     try:
         conn = psycopg2.connect(
@@ -18,7 +17,7 @@ def get_connection(host, port, dbname, user, password):
         click.echo(f"[ERROR] Could not connect: {e}")
         return None
 
-# ── Create fake pgwatch metrics table ───────────────
+
 def setup_demo_tables(host, port, dbname, user, password):
     conn = get_connection(host, port, dbname, user, password)
     if not conn:
@@ -54,7 +53,7 @@ def setup_demo_tables(host, port, dbname, user, password):
         click.echo(f"[ERROR] Setup failed: {e}")
         return False
 
-# ── Fetch Metrics ────────────────────────────────────
+
 def fetch_metrics(host, port, dbname, user, password):
     conn = get_connection(host, port, dbname, user, password)
     if not conn:
@@ -106,8 +105,6 @@ def call_llm(prompt):
         return response.json().get("response", "No response.")
     except Exception:
         return generate_simple_response(prompt)
-
-# ── Simple response if no LLM available ─────────────
 def generate_simple_response(prompt):
     if "slow" in prompt.lower() or "performance" in prompt.lower():
         return ("Based on metrics: avg query time is 4200ms which is very high. "
@@ -126,7 +123,7 @@ def generate_simple_response(prompt):
                 "Cache hit ratio is 94.5% which is healthy.\n\n"
                 "Run: SELECT * FROM pg_stat_activity WHERE state != 'idle';")
 
-# ── Shared DB options decorator ──────────────────────
+
 def db_options(f):
     f = click.option("--host",     default="localhost", show_default=True, help="DB host")(f)
     f = click.option("--port",     default=5432,        show_default=True, help="DB port")(f)
@@ -135,7 +132,7 @@ def db_options(f):
     f = click.option("--password", default="root",      show_default=True, help="DB password")(f)
     return f
 
-# ── CLI ──────────────────────────────────────────────
+
 @click.group()
 def cli():
     """pgwatch-ai: Ask your PostgreSQL database what is wrong."""
