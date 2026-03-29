@@ -1,0 +1,3 @@
+echo psycopg2 
+echo requests 
+echo click 
